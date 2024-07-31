@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Optional: Styling for the confirmation message */
+        .confirmation-message {
+            color: green;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -21,7 +29,7 @@
     <main>
         <section>
             <h2>Get in Touch</h2>
-            <form action="send_email.php" method="POST">
+            <form id="contact-form" action="send_email.php" method="POST">
                 <label for="name">Name:</label>
                 <input type="text" id="name" name="name" required><br>
 
@@ -41,6 +49,7 @@
                 <input type="password" id="password" name="password" required><br>
 
                 <button type="submit">Send</button>
+                <div id="confirmation-message" class="confirmation-message"></div>
             </form>
         </section>
     </main>
@@ -49,6 +58,31 @@
         <p>&copy; 2024 Astrox</p>
     </footer>
 
-    <script src="script.js"></script>
+    <script>
+        document.getElementById('contact-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            var form = event.target;
+            var formData = new FormData(form);
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(result => {
+                // Check if the result indicates success
+                if (result.includes('Email successfully sent!')) {
+                    document.getElementById('confirmation-message').innerText = 'Sent!';
+                } else {
+                    document.getElementById('confirmation-message').innerText = 'Failed to send.';
+                }
+            })
+            .catch(error => {
+                document.getElementById('confirmation-message').innerText = 'Failed to send.';
+                console.error('Error:', error);
+            });
+        });
+    </script>
 </body>
 </html>
